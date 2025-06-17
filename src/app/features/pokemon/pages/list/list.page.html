@@ -5,20 +5,25 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row *ngFor="let p of pokemons">
-      <ion-col size="4" sizeMd="2">
-        <ion-img [src]="p.sprite" [alt]="p.name"></ion-img>
-      </ion-col>
 
-      <ion-col size="8" sizeMd="4" class="ion-align-self-center">
-        {{ p.name | titlecase }}
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="cards">
+    <pokemon-card
+      *ngFor="let p of pokemons"
+      [id]="p.id"
+      [name]="p.name"
+      [sprite]="p.sprite"
+      [type]="p.type"
+      [onSelect]="openDetails">
+    </pokemon-card>
+  </div>
 
-  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
-    <ion-infinite-scroll-content loadingSpinner="bubbles">
+  <ion-infinite-scroll
+      threshold="120px"
+      (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Carregando…">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
 </ion-content>

@@ -1,0 +1,22 @@
+<ion-card class="poke-card type-{{ type }}" (click)="onSelect?.(id)">
+
+  <div class="card-header">
+    <span class="name">{{ name | titlecase }}</span>
+
+    <ion-icon
+      *ngIf="showHeart"
+      [name]="fav ? 'heart' : 'heart-outline'"
+      size="small"
+      class="heart"
+      (click)="$event.stopPropagation(); onSelect?.(id)">
+    </ion-icon>
+  </div>
+
+  <ion-img [src]="sprite" [alt]="name"></ion-img>
+
+
+  <div class="card-footer">
+    <span class="id">#{{ id | number:'3.0' }}</span>
+    <ion-badge>{{ type | titlecase }}</ion-badge>
+  </div>
+</ion-card>
