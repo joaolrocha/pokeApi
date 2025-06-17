@@ -1,23 +1,19 @@
-import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
-  IonBackButton,
-  IonBadge,
-  IonButtons,
-  IonContent, IonHeader,
-  IonIcon,
-  IonImg,
-  IonTitle, IonToolbar
+  IonContent, IonHeader, IonBackButton, IonButtons,
+  IonTitle, IonToolbar, IonImg, IonIcon
 } from '@ionic/angular/standalone';
-import { combineLatest, forkJoin, map, of, switchMap } from 'rxjs';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { combineLatest, switchMap, map, forkJoin, of } from 'rxjs';
 
-import { arrowForwardOutline } from 'ionicons/icons';
 import { PokemonService } from 'src/app/core/services/pokemon.service';
-import { PokemonTcgCardComponent } from '../../components/pokemon-tcg-card/pokemon-tcg-card.component';
+import { PokemonTcgCardComponent } from
+  '../../components/pokemon-tcg-card/pokemon-tcg-card.component';
+import { arrowForwardOutline } from 'ionicons/icons';
 
-/* ------------------------------------------------------------------ */
-/* Tipos auxiliares                                                    */
+/* ────────── modelos ────────── */
+interface StatLine { label: string; value: number; }
 interface CardData {
   id: number;
   name: string;
@@ -28,41 +24,41 @@ interface CardData {
   color: string;
   abilities: string[];
   description: string;
+  stats: StatLine[];
 }
-
 interface EvoNode {
   species: { name: string };
   evolves_to: EvoNode[];
 }
-/* ------------------------------------------------------------------ */
+/* ───────────────────────────── */
 
 @Component({
   standalone: true,
   templateUrl: './details.page.html',
   styleUrls: ['./details.page.scss'],
-  imports: [ IonIcon, IonImg,
+  imports: [
     CommonModule, TitleCasePipe,
     RouterModule,
     IonHeader, IonToolbar, IonTitle,
-    IonButtons, IonBackButton, IonContent,
+    IonButtons, IonBackButton,
+    IonContent,
     PokemonTcgCardComponent,
   ],
 })
 export class DetailsPage implements OnInit {
 
-  card?: CardData;
-  gallery: string[] = [];
-  evo: { id: number; name: string; sprite: string | null }[] = [];
+  card?: CardData;                                           // carta completa
+  evo: { id:number; name:string; sprite:string|null; type:string }[] = [];
 
-  arrow = arrowForwardOutline;          // ícone seta para o template
+  arrow = arrowForwardOutline;                               // ícone seta
 
   constructor(
-    private route: ActivatedRoute,
+    private route : ActivatedRoute,
     private router: Router,
-    private poke: PokemonService
-  ) { }
+    private poke  : PokemonService
+  ) {}
 
-  /* -------------------------- ciclo de vida -------------------------- */
+  /* -------- ciclo de vida -------- */
   ngOnInit(): void {
     this.route.paramMap.pipe(
       switchMap(params => {
@@ -72,64 +68,57 @@ export class DetailsPage implements OnInit {
           this.poke.getPokemonSpecies(id)
         ]);
       }),
-      switchMap(([p, s]) => {
-        /* monta card */
-        this.buildCard(p, s);
-
-        /* coleta sprites para galeria */
-        this.gallery = [
-          p.sprites.front_default,
-          p.sprites.back_default,
-          p.sprites.front_shiny,
-          p.sprites.back_shiny,
-          p.sprites.other.dream_world.front_default
-        ].filter(Boolean) as string[];
-
-        /* ------------- evolução ------------- */
-        const evoUrl: string | undefined = s.evolution_chain?.url;
-        if (!evoUrl) return of([]);
-
-        return this.poke.genericGet<any>(evoUrl).pipe(
-          map(resp => this.flattenChain(resp.chain)),      // ← aqui
-          switchMap(names => forkJoin(names.map(n => this.poke.get(n))))
-        );
+      switchMap(([pokeData, species]) => {
+        this.buildCard(pokeData, species);
+        return this.loadEvolution(species.evolution_chain?.url);
       })
-    ).subscribe(list => {
-      /* lista pode vir vazia se não houver evolução */
-      this.evo = (list as any[]).map(p => ({
-        id: p.id,
-        name: p.name,
-        sprite: p.sprites.other['official-artwork'].front_default,
-        type: p.types[0].type.name
-      }));
-    });
+    ).subscribe(list => this.evo = list);
   }
 
-  /* ------------------------ helpers ------------------------ */
-  goTo(id: number) {
-    this.router.navigate(['/details', id]);
-  }
+  /* -------- helpers -------- */
+  goTo(id: number) { this.router.navigate(['/details', id]); }
 
   private buildCard(p: any, s: any) {
     this.card = {
-      id: p.id,
-      name: p.name,
+      id   : p.id,
+      name : p.name,
       sprite: p.sprites.other['official-artwork'].front_default,
       types: p.types.map((t: any) => t.type.name),
       height: p.height,
       weight: p.weight,
-      color: s.color?.name || '',
+      color : s.color?.name ?? '',
       abilities: p.abilities.map((a: any) => a.ability.name),
-      description: s.flavor_text_entries
-        .find((f: any) => f.language.name === 'en')?.flavor_text
-        ?.replace(/\f/g, ' ') || ''
+      description:
+        s.flavor_text_entries
+          .find((f: any) => f.language.name === 'en')?.flavor_text
+          ?.replace(/\f/g, ' ') || '',
+      stats: p.stats.map((st: any) => ({
+        label : st.stat.name.toUpperCase(),
+        value : st.base_stat
+      }))
     };
   }
 
-  /** percorre a árvore de evolução e devolve nomes em ordem */
+  /** carrega cadeia de evolução, devolve lista com id/nome/sprite/tipo */
+  private loadEvolution(url?: string) {
+    if (!url) return of([]);
+
+    return this.poke.genericGet<{ chain: EvoNode }>(url).pipe(
+      map(r => this.flattenChain(r.chain)),
+      switchMap(names => forkJoin(names.map(n => this.poke.get(n)))),
+      map(list => list.map(p => ({
+        id: p.id,
+        name: p.name,
+        sprite: p.sprites.other['official-artwork'].front_default,
+        type: p.types[0].type.name
+      })))
+    );
+  }
+
+  /** percorre árvore de evolução, devolve nomes em ordem */
   private flattenChain(node: EvoNode, acc: string[] = []): string[] {
     acc.push(node.species.name);
-    node.evolves_to.forEach(n => this.flattenChain(n, acc));
+    node.evolves_to.forEach(child => this.flattenChain(child, acc));
     return acc;
   }
 }

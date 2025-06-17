@@ -33,3 +33,14 @@ $t-colors: (
 @each $t,$c in $t-colors {
   .tcg-card.type-#{$t} header { background: $c; }
 }
+
+
+.stats {
+  padding: 6px 10px;
+  background: #f3f3f3;
+  font-size: 12px;
+  div {
+    display:flex; justify-content:space-between;
+    font-weight:600; margin:2px 0;
+  }
+}

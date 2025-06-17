@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { IonBadge, IonImg } from '@ionic/angular/standalone';
 
+interface StatLine { label: string; value: number; }
 interface CardData {
   id: number;
   name: string;
@@ -12,6 +13,7 @@ interface CardData {
   color: string;
   abilities: string[];
   description: string;
+  stats: StatLine[];
 }
 
 @Component({
