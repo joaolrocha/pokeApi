@@ -10,4 +10,8 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'list',
+    loadComponent: () => import('./features/pokemon/pages/list/list.page').then( m => m.ListPage)
+  },
 ];
