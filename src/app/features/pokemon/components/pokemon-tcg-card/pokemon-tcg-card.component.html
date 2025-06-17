@@ -1,0 +1,22 @@
+<div class="tcg-card type-{{ data.types[0] }}">
+  <header>
+    <span class="name">{{ data.name | titlecase }}</span>
+    <span class="id">#{{ data.id | number:'3.0' }}</span>
+  </header>
+
+  <ion-img [src]="data.sprite" [alt]="data.name"></ion-img>
+
+  <section class="info">
+    <div class="row">
+      <span class="label">Type</span>
+      <ion-badge *ngFor="let t of data.types">{{ t }}</ion-badge>
+    </div>
+    <div class="row"><span class="label">Height</span>{{ data.height / 10 }} m</div>
+    <div class="row"><span class="label">Weight</span>{{ data.weight / 10 }} kg</div>
+    <div class="row"><span class="label">Abilities</span>{{ data.abilities.join(', ') }}</div>
+  </section>
+
+  <section class="flavor">
+    {{ data.description }}
+  </section>
+</div>

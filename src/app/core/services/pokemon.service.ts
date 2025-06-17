@@ -19,11 +19,9 @@ export class PokemonService {
     return this.http.get<Pokemon>(`${this.api}/pokemon/${idOrName}`);
   }
 
-  species(idOrName: number | string) {
-    return this.http.get<PokemonSpecies>(
-      `${this.api}/pokemon-species/${idOrName}`
-    );
-  }
+getPokemonSpecies(idOrName: string | number) {
+  return this.http.get<any>(`${this.api}/pokemon-species/${idOrName}`);
+}
 
   /** helper para uso rápido em scripts */
   async peek(id = 1) {
@@ -41,4 +39,7 @@ getByType(type: string) {
     `${this.api}/type/${type}`
   );
 }
+
+genericGet<T = any>(url: string) { return this.http.get<T>(url); }
+
 }

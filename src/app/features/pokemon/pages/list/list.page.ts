@@ -1,10 +1,9 @@
 import { CommonModule, NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';     
 import {
-  IonButtons,
   IonContent, IonHeader,
-  IonIcon,
   IonInfiniteScroll, IonInfiniteScrollContent,
   IonLabel,
   IonSearchbar,
@@ -66,13 +65,14 @@ export class ListPage implements OnInit {
   constructor(
     private poke: PokemonService,
     private fav: FavoritesService,
+    private router: Router  
   ) { }
 
   /* ---------- favoritos ---------- */
   isFav = (id: number) => this.fav.isFav(id);
   toggleFav = (id: number) => this.fav.toggle(id);
 
-  openDetails = (id: number) => console.log('detalhes', id);
+  openDetails = (id: number) => this.router.navigate(['/details', id]);
 
   /* ---------- ciclo de vida ---------- */
   ngOnInit() {

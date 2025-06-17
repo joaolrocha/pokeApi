@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ card?.name | titlecase }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="card">
+
+  <!-- Carta -->
+  <div class="center">
+    <pokemon-tcg-card [data]="card"></pokemon-tcg-card>
+  </div>
+
+  <div class="evo-title" *ngIf="evo.length > 1">Evolution</div>
+
+<div class="evo-row" *ngIf="evo.length > 1">
+  <ng-container *ngFor="let e of evo; let last = last">
+    <div class="evo-card" (click)="goTo(e.id)">
+      <ion-img [src]="e.sprite" [alt]="e.name"></ion-img>
+      <span>{{ e.name | titlecase }}</span>
+    </div>
+    <ion-icon *ngIf="!last" name="arrow-forward-outline"></ion-icon>
+  </ng-container>
+</div>
+
+</ion-content>
