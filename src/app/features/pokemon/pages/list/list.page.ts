@@ -1,21 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import {
   IonContent, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent,
-  IonTitle, IonToolbar
+  IonTitle, IonToolbar, IonSearchbar,
+  IonSegment, IonSegmentButton, IonLabel,
 } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NgForOf } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { PokemonService } from 'src/app/core/services/pokemon.service';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
 import { PokemonCardComponent } from 'src/app/shared/components/pokemon-card/pokemon-card.component';
 
+/* ───── todos os tipos de Pokémon ───── */
+const ALL_TYPES = [
+  'normal','fire','water','grass','electric','ice',
+  'fighting','poison','ground','flying','psychic','bug',
+  'rock','ghost','dragon','dark','steel','fairy'
+] as const;
+type PokeType = (typeof ALL_TYPES)[number];
+/* ───────────────────────────────────── */
+
 interface PokemonCardData {
   id: number;
-  name: string;
+  name: string;          // em minúsculas
   sprite: string | null;
-  type: string;
+  type: PokeType;
 }
 
 @Component({
@@ -24,59 +36,93 @@ interface PokemonCardData {
   templateUrl: './list.page.html',
   styleUrls: ['./list.page.scss'],
   imports: [
+    CommonModule, FormsModule, NgForOf,
     IonHeader, IonToolbar, IonTitle,
+    IonSearchbar, IonSegment, IonSegmentButton, IonLabel,
     IonContent, IonInfiniteScroll, IonInfiniteScrollContent,
-    PokemonCardComponent, NgForOf,
+    PokemonCardComponent,
   ],
 })
 export class ListPage implements OnInit {
-  pokemons: PokemonCardData[] = [];
+
+  /* ---------- dados e estado ---------- */
+  readonly ALL_TYPES = ALL_TYPES;          // expõe para o template
+  allNames: string[] = [];                 // todos os nomes (ou filtrados por tipo)
+  poolNames: string[] = [];                // nomes após busca por texto
+  pokemons: PokemonCardData[] = [];        // objetos detalhados exibidos
 
   offset = 0;
-  readonly limit = 20;
-  private firstLoad = true;
+  readonly limit = 40;
   loading = false;
 
-  /* ---- favoritos ---- */
+  /* filtros */
+  search = '';
+  typeFilter: '' | PokeType = '';
+
   constructor(
     private poke: PokemonService,
-    private fav: FavoritesService
+    private fav : FavoritesService
   ) {}
 
-  /** Getter usado no template (ainda sem filtros) */
-  get filtered() { return this.pokemons; }
-
-  /** Helpers de favorito */
-  isFav = (id: number) => this.fav.isFav(id);
+  /* ---------- favoritos ---------- */
+  isFav  = (id: number) => this.fav.isFav(id);
   toggleFav = (id: number) => this.fav.toggle(id);
-
-  ngOnInit() { this.loadMore(); }
 
   openDetails = (id: number) => console.log('detalhes', id);
 
+  /* ---------- ciclo de vida ---------- */
+  ngOnInit() {
+    /* baixa TODOS os nomes uma única vez */
+    this.poke.listNames().subscribe(res => {
+      this.allNames = res.results.map(r => r.name);
+      this.applyFilters();                 // carregamento inicial
+    });
+  }
+
+  /* ---------- filtros ---------- */
+  applyFilters() {
+    /* 1. Filtra por tipo (se algum selecionado) */
+    const base$ = this.typeFilter
+      ? this.poke.getByType(this.typeFilter).pipe(
+          map(r => r.pokemon.map(p => p.pokemon.name))
+        )
+      : of(this.allNames);
+
+    base$.subscribe(baseNames => this.finishFilter(baseNames));
+  }
+
+  private finishFilter(base: string[]) {
+    /* 2. Filtra texto */
+    const txt = this.search.trim().toLowerCase();
+    this.poolNames = base.filter(n => !txt || n.includes(txt));
+
+    /* 3. Reinicia paginação */
+    this.pokemons = [];
+    this.offset   = 0;
+    this.loadMore();                       // busca primeiros 20 detalhes
+  }
+
+  /* ---------- paginação / detalhes ---------- */
   loadMore(ev?: any) {
-    if (this.loading) return;
+    if (this.loading || this.offset >= this.poolNames.length) {
+      ev?.target.complete(); return;
+    }
     this.loading = true;
 
-    const batch = this.firstLoad ? 60 : this.limit;
+    const slice = this.poolNames.slice(this.offset, this.offset + this.limit);
 
-    this.poke.list(this.offset, batch).pipe(
-      switchMap(res => forkJoin(res.results.map(r => this.poke.get(r.name)))),
+    forkJoin(slice.map(name => this.poke.get(name))).pipe(
       map(arr => arr.map(p => ({
-        id: p.id,
-        name: p.name,
+        id   : p.id,
+        name : p.name.toLowerCase(),
         sprite: p.sprites.other['official-artwork'].front_default ?? p.sprites.front_default,
-        type: p.types[0].type.name,
+        type : p.types[0].type.name as PokeType,
       })))
-    ).subscribe({
-      next: cards => {
-        this.pokemons.push(...cards);
-        this.offset += batch;
-        this.firstLoad = false;
-        this.loading = false;
-        ev?.target.complete();
-      },
-      error: () => { this.loading = false; ev?.target.complete(); }
+    ).subscribe(cards => {
+      this.pokemons.push(...cards);
+      this.offset += this.limit;
+      this.loading = false;
+      ev?.target.complete();
     });
   }
 }

@@ -6,6 +6,26 @@
 
 <ion-content>
 
+  <!-- BUSCA POR NOME -->
+  <ion-searchbar
+    debounce="300"
+    placeholder="Buscar Pokémon"
+    [(ngModel)]="search"
+    (ionInput)="applyFilters()">
+  </ion-searchbar>
+
+  <!-- FILTRO POR TIPO -->
+  <ion-segment scrollable [(ngModel)]="typeFilter" (ionChange)="applyFilters()">
+    <ion-segment-button value="">
+      <ion-label>Todos</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button *ngFor="let t of ALL_TYPES" [value]="t">
+      <ion-label>{{ t | titlecase }}</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- GRADE DE CARTÕES -->
   <div class="cards">
     <pokemon-card
       *ngFor="let p of pokemons"
@@ -14,18 +34,14 @@
       [sprite]="p.sprite"
       [type]="p.type"
       [fav]="isFav(p.id)"
-      [onToggleFav]="toggleFav" 
+      [onToggleFav]="toggleFav"
       [onSelect]="openDetails">
     </pokemon-card>
   </div>
 
-  <ion-infinite-scroll
-      threshold="120px"
-      (ionInfinite)="loadMore($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Carregando…">
-    </ion-infinite-scroll-content>
+  <!-- INFINITE SCROLL -->
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
 </ion-content>
