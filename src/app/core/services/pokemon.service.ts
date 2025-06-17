@@ -29,4 +29,16 @@ export class PokemonService {
   async peek(id = 1) {
     return firstValueFrom(this.get(id));
   }
+
+  listNames(limit = 2000) {
+  return this.http.get<ListResponse>(`${this.api}/pokemon`, {
+    params: { offset: 0, limit }
+  });
+}
+
+getByType(type: string) {
+  return this.http.get<{ pokemon: { pokemon: { name: string } }[] }>(
+    `${this.api}/type/${type}`
+  );
+}
 }
