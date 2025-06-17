@@ -1,0 +1,13 @@
+.cards {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+
+@media (min-width: 600px) {
+  pokemon-card ion-img {
+    height: 160px;
+  }
+}
