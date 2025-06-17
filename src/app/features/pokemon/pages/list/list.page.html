@@ -13,6 +13,8 @@
       [name]="p.name"
       [sprite]="p.sprite"
       [type]="p.type"
+      [fav]="isFav(p.id)"
+      [onToggleFav]="toggleFav" 
       [onSelect]="openDetails">
     </pokemon-card>
   </div>

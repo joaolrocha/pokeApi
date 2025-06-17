@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  IonContent,
-  IonHeader,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonTitle,
-  IonToolbar,
+  IonContent, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent,
+  IonTitle, IonToolbar
 } from '@ionic/angular/standalone';
 import { NgForOf } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { PokemonService } from 'src/app/core/services/pokemon.service';
+import { FavoritesService } from 'src/app/core/services/favorites.service';
 import { PokemonCardComponent } from 'src/app/shared/components/pokemon-card/pokemon-card.component';
 
 interface PokemonCardData {
@@ -27,70 +24,59 @@ interface PokemonCardData {
   templateUrl: './list.page.html',
   styleUrls: ['./list.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonInfiniteScroll,
-    IonInfiniteScrollContent,
-    PokemonCardComponent,
-    NgForOf,
+    IonHeader, IonToolbar, IonTitle,
+    IonContent, IonInfiniteScroll, IonInfiniteScrollContent,
+    PokemonCardComponent, NgForOf,
   ],
 })
 export class ListPage implements OnInit {
   pokemons: PokemonCardData[] = [];
 
-  offset = 0;           // posição atual na PokeAPI
-  readonly limit = 20;  // lote “normal”
+  offset = 0;
+  readonly limit = 20;
   private firstLoad = true;
   loading = false;
 
-  constructor(private poke: PokemonService) {}
+  /* ---- favoritos ---- */
+  constructor(
+    private poke: PokemonService,
+    private fav: FavoritesService
+  ) {}
 
-  ngOnInit() {
-    this.loadMore();
-  }
+  /** Getter usado no template (ainda sem filtros) */
+  get filtered() { return this.pokemons; }
 
-  /** abre detalhes (vai virar router.navigate depois) */
-  openDetails = (id: number) => console.log('clicou', id);
+  /** Helpers de favorito */
+  isFav = (id: number) => this.fav.isFav(id);
+  toggleFav = (id: number) => this.fav.toggle(id);
 
-  /** chamada usada pelo infinite-scroll e pelo primeiro load */
+  ngOnInit() { this.loadMore(); }
+
+  openDetails = (id: number) => console.log('detalhes', id);
+
   loadMore(ev?: any) {
     if (this.loading) return;
     this.loading = true;
 
-    // 60 no primeiro fetch, depois 20
     const batch = this.firstLoad ? 60 : this.limit;
 
-    this.poke
-      .list(this.offset, batch)
-      .pipe(
-        switchMap((res) =>
-          forkJoin(res.results.map((r) => this.poke.get(r.name)))
-        ),
-        map((arr) =>
-          arr.map((p) => ({
-            id: p.id,
-            name: p.name,
-            sprite:
-              p.sprites.other['official-artwork'].front_default ??
-              p.sprites.front_default,
-            type: p.types[0].type.name,
-          }))
-        )
-      )
-      .subscribe({
-        next: (cards) => {
-          this.pokemons.push(...cards);
-          this.offset += batch;
-          this.firstLoad = false;      // a partir daqui usa 20 em 20
-          this.loading = false;
-          ev?.target.complete();
-        },
-        error: () => {
-          this.loading = false;
-          ev?.target.complete();
-        },
-      });
+    this.poke.list(this.offset, batch).pipe(
+      switchMap(res => forkJoin(res.results.map(r => this.poke.get(r.name)))),
+      map(arr => arr.map(p => ({
+        id: p.id,
+        name: p.name,
+        sprite: p.sprites.other['official-artwork'].front_default ?? p.sprites.front_default,
+        type: p.types[0].type.name,
+      })))
+    ).subscribe({
+      next: cards => {
+        this.pokemons.push(...cards);
+        this.offset += batch;
+        this.firstLoad = false;
+        this.loading = false;
+        ev?.target.complete();
+      },
+      error: () => { this.loading = false; ev?.target.complete(); }
+    });
   }
 }

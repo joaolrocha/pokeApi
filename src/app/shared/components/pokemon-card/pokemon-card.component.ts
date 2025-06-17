@@ -32,6 +32,12 @@ export class PokemonCardComponent {
 
   // favoritos / click
   @Input() fav = false;
-  @Input() showHeart = false;
+  @Input() showHeart = true;
+  @Input() onToggleFav?: (id: number) => void;
   @Input() onSelect?: (id: number) => void;
+
+  toggle(e: Event) {
+  e.stopPropagation();
+  this.onToggleFav?.(this.id);                 // chamada segura (opcional enc enc enc)
+}
 }

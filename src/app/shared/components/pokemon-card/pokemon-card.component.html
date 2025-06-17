@@ -6,9 +6,9 @@
     <ion-icon
       *ngIf="showHeart"
       [name]="fav ? 'heart' : 'heart-outline'"
+      color="danger"
       size="small"
-      class="heart"
-      (click)="$event.stopPropagation(); onSelect?.(id)">
+      (click)="toggle($event)">
     </ion-icon>
   </div>
 

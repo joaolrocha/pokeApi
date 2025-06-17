@@ -21,7 +21,14 @@ import {
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { PokemonService } from './app/core/services/pokemon.service';
+import { addIcons } from 'ionicons';
+import { heart, heartOutline } from 'ionicons/icons';
 
+
+addIcons({
+  heart,
+  'heart-outline': heartOutline,
+});
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
