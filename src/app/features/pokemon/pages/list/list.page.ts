@@ -1,24 +1,28 @@
+import { CommonModule, NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  IonContent, IonHeader, IonInfiniteScroll, IonInfiniteScrollContent,
-  IonTitle, IonToolbar, IonSearchbar,
-  IonSegment, IonSegmentButton, IonLabel,
-} from '@ionic/angular/standalone';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgForOf } from '@angular/common';
+import {
+  IonButtons,
+  IonContent, IonHeader,
+  IonIcon,
+  IonInfiniteScroll, IonInfiniteScrollContent,
+  IonLabel,
+  IonSearchbar,
+  IonSegment, IonSegmentButton,
+  IonTitle, IonToolbar
+} from '@ionic/angular/standalone';
 import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
-import { PokemonService } from 'src/app/core/services/pokemon.service';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
+import { PokemonService } from 'src/app/core/services/pokemon.service';
 import { PokemonCardComponent } from 'src/app/shared/components/pokemon-card/pokemon-card.component';
 
 /* ───── todos os tipos de Pokémon ───── */
 const ALL_TYPES = [
-  'normal','fire','water','grass','electric','ice',
-  'fighting','poison','ground','flying','psychic','bug',
-  'rock','ghost','dragon','dark','steel','fairy'
+  'normal', 'fire', 'water', 'grass', 'electric', 'ice',
+  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
+  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
 ] as const;
 type PokeType = (typeof ALL_TYPES)[number];
 /* ───────────────────────────────────── */
@@ -61,11 +65,11 @@ export class ListPage implements OnInit {
 
   constructor(
     private poke: PokemonService,
-    private fav : FavoritesService
-  ) {}
+    private fav: FavoritesService,
+  ) { }
 
   /* ---------- favoritos ---------- */
-  isFav  = (id: number) => this.fav.isFav(id);
+  isFav = (id: number) => this.fav.isFav(id);
   toggleFav = (id: number) => this.fav.toggle(id);
 
   openDetails = (id: number) => console.log('detalhes', id);
@@ -84,8 +88,8 @@ export class ListPage implements OnInit {
     /* 1. Filtra por tipo (se algum selecionado) */
     const base$ = this.typeFilter
       ? this.poke.getByType(this.typeFilter).pipe(
-          map(r => r.pokemon.map(p => p.pokemon.name))
-        )
+        map(r => r.pokemon.map(p => p.pokemon.name))
+      )
       : of(this.allNames);
 
     base$.subscribe(baseNames => this.finishFilter(baseNames));
@@ -98,8 +102,8 @@ export class ListPage implements OnInit {
 
     /* 3. Reinicia paginação */
     this.pokemons = [];
-    this.offset   = 0;
-    this.loadMore();                       // busca primeiros 20 detalhes
+    this.offset = 0;
+    this.loadMore();
   }
 
   /* ---------- paginação / detalhes ---------- */
@@ -113,10 +117,10 @@ export class ListPage implements OnInit {
 
     forkJoin(slice.map(name => this.poke.get(name))).pipe(
       map(arr => arr.map(p => ({
-        id   : p.id,
-        name : p.name.toLowerCase(),
+        id: p.id,
+        name: p.name.toLowerCase(),
         sprite: p.sprites.other['official-artwork'].front_default ?? p.sprites.front_default,
-        type : p.types[0].type.name as PokeType,
+        type: p.types[0].type.name as PokeType,
       })))
     ).subscribe(cards => {
       this.pokemons.push(...cards);

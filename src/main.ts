@@ -20,7 +20,6 @@ import {
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { PokemonService } from './app/core/services/pokemon.service';
 import { addIcons } from 'ionicons';
 import { heart, heartOutline } from 'ionicons/icons';
 
@@ -39,9 +38,3 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-  .then((appRef) => {
-    // Smoke-test: busca Pikachu
-    const poke = appRef.injector.get(PokemonService);
-    poke.get(25).subscribe((data) => console.log('Pikachu:', data));
-  })
-  .catch((err) => console.error(err));
