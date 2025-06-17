@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ card?.name | titlecase }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="card">
+
+  <!-- GRID 2 colunas -->
+  <div class="details-grid">
+    <pokemon-tcg-card [data]="card"></pokemon-tcg-card>
+  </div>
+  
+
+</ion-content>
