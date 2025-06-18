@@ -32,6 +32,7 @@ $t-colors: (
 /* cor do header por tipo */
 @each $t,$c in $t-colors {
   .tcg-card.type-#{$t} header { background: $c; }
+  .tcg-card.type-#{$t} ion-badge { background: $c; color: #fff; }
 }
 
 
