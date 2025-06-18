@@ -1,11 +1,24 @@
 <ion-header>
-  <ion-toolbar>
-    <img src="assets/logo.png" alt="Pokédex" style="height: 100px;" />
-    <ion-buttons slot="end">
-      <ion-icon name="heart" size="large" (click)="openFavs()"></ion-icon>
+
+<ion-toolbar class="logo-bar">
+  <div class="logo-wrapper">
+    <img src="assets/logo.png" alt="Pokédex" />
+  </div>
+</ion-toolbar>
+
+
+  <!-- 2ª faixa – botão “My Favorites” -->
+  <ion-toolbar class="fav-bar">
+    <ion-buttons class="fav-btn-wrapper">
+      <ion-button color="danger" (click)="openFavs()">
+        <ion-icon name="heart" slot="start" color="warning"></ion-icon>
+        My&nbsp;Favorites
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
 </ion-header>
+
 
 <ion-content>
 

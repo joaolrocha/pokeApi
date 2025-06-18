@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
+  IonButton,
   IonButtons, IonContent, IonHeader, IonIcon,
   IonInfiniteScroll, IonInfiniteScrollContent,
   IonLabel,
@@ -40,7 +41,7 @@ interface PokemonCardData {
   selector: 'app-list',
   templateUrl: './list.page.html',
   styleUrls: ['./list.page.scss'],
-  imports: [IonTitle,
+  imports: [IonButton, IonTitle,
     CommonModule, FormsModule, NgForOf,
     IonHeader, IonToolbar, IonButtons, IonIcon,
     IonSearchbar, IonSegment, IonSegmentButton, IonLabel,

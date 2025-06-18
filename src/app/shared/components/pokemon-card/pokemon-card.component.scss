@@ -56,5 +56,12 @@ ion-card.poke-card {
 @each $type, $color in $pokedex-colors {
   ion-card.poke-card.type-#{$type} {
     border: 3px solid $color;
+
+    /* badge usa a MESMA cor do tipo */
+    ion-badge {
+      --background: #{$color};
+      /* texto branco em tons escuros, preto em tons claros */
+      --color: if(lightness($color) > 60, #000, #fff);
+    }
   }
 }

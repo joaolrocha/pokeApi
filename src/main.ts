@@ -21,12 +21,13 @@ import {
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { addIcons } from 'ionicons';
-import { heart, heartOutline } from 'ionicons/icons';
+import { heart, heartOutline, close } from 'ionicons/icons';
 
 
 addIcons({
   heart,
   'heart-outline': heartOutline,
+  close
 });
 bootstrapApplication(AppComponent, {
   providers: [
