@@ -20,7 +20,7 @@ App de Pokédex mobile‑first feito em Ionic 7 stand‑alone com Angular 19 q
 - Busca por nome e filtro por tipo  
 - Carta detalhada com 6 stats, sprite oficial e flavor text  
 - Favoritar/desfavoritar com persistência local  
-- Modal Central “My Favorites” responsivo  
+- Modal Central “My Favorites” 
 - Cores automáticas por tipo
 
 ---
