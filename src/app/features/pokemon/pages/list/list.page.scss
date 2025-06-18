@@ -5,6 +5,34 @@
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 }
 
+.logo-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;   /* centro horiz. */
+  align-items: center;       /* centro vert.   */
+  padding: 6px 0;
+}
+
+.logo-wrapper img {
+  height: 90px;              /* ajuste livre   */
+  pointer-events: none;
+}
+
+/* botão de favoritos centralizado */
+.fav-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+ion-button[color="danger"] {
+  --border-radius: 20px;
+  --padding-start: 14px;
+  --padding-end  : 14px;
+  font-weight: 600;
+}
+
+
 
 @media (min-width: 600px) {
   pokemon-card ion-img {

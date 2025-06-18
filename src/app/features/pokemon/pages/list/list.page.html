@@ -1,47 +1,83 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Pokédex</ion-title>
+
+<ion-toolbar class="logo-bar">
+  <div class="logo-wrapper">
+    <img src="assets/logo.png" alt="Pokédex" />
+  </div>
+</ion-toolbar>
+
+
+  <!-- 2ª faixa – botão “My Favorites” -->
+  <ion-toolbar class="fav-bar">
+    <ion-buttons class="fav-btn-wrapper">
+      <ion-button color="danger" (click)="openFavs()">
+        <ion-icon name="heart" slot="start" color="warning"></ion-icon>
+        My&nbsp;Favorites
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
+
 </ion-header>
+
 
 <ion-content>
 
-  <!-- BUSCA POR NOME -->
-  <ion-searchbar
-    debounce="300"
-    placeholder="Buscar Pokémon"
-    [(ngModel)]="search"
-    (ionInput)="applyFilters()">
+  <!-- busca -->
+  <ion-searchbar debounce="300" placeholder="Buscar Pokémon"
+                 [(ngModel)]="search" (ionInput)="applyFilters()">
   </ion-searchbar>
 
-  <!-- FILTRO POR TIPO -->
+  <!-- filtro tipo -->
   <ion-segment scrollable [(ngModel)]="typeFilter" (ionChange)="applyFilters()">
-    <ion-segment-button value="">
-      <ion-label>Todos</ion-label>
-    </ion-segment-button>
-
+    <ion-segment-button value=""><ion-label>Todos</ion-label></ion-segment-button>
     <ion-segment-button *ngFor="let t of ALL_TYPES" [value]="t">
       <ion-label>{{ t | titlecase }}</ion-label>
     </ion-segment-button>
   </ion-segment>
 
-  <!-- GRADE DE CARTÕES -->
+  <!-- cards -->
   <div class="cards">
     <pokemon-card
       *ngFor="let p of pokemons"
-      [id]="p.id"
-      [name]="p.name"
-      [sprite]="p.sprite"
-      [type]="p.type"
-      [fav]="isFav(p.id)"
-      [onToggleFav]="toggleFav"
-      [onSelect]="openDetails">
+      [id]="p.id" [name]="p.name" [sprite]="p.sprite" [type]="p.type"
+      [fav]="isFav(p.id)" [onToggleFav]="toggleFav" [onSelect]="openDetails">
     </pokemon-card>
   </div>
 
-  <!-- INFINITE SCROLL -->
+  <!-- infinite scroll -->
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
+  <!-- --------------- MODAL FAVORITOS --------------- -->
+  <ion-modal [isOpen]="showFavs" (didDismiss)="showFavs = false" class="fav-modal">
+
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="danger">
+          <ion-title>My Favorites</ion-title>
+          <ion-buttons slot="end">
+            <ion-icon name="close" size="large" (click)="showFavs = false"></ion-icon>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <div class="cards" *ngIf="favMons.length; else empty">
+          <pokemon-card
+            *ngFor="let p of favMons"
+            [id]="p.id" [name]="p.name" [sprite]="p.sprite" [type]="p.type"
+            [fav]="true" [onToggleFav]="toggleFav">
+          </pokemon-card>
+        </div>
+
+        <ng-template #empty>
+          <p class="empty">You haven’t added any Pokémon yet 😢</p>
+        </ng-template>
+      </ion-content>
+    </ng-template>
+
+  </ion-modal>
+  <!-- ---------------------------------------------- -->
 
 </ion-content>
