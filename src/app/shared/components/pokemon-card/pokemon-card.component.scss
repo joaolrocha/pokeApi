@@ -28,6 +28,7 @@ ion-card.poke-card {
   overflow: hidden;
   cursor: pointer;
   transition: transform .15s;
+  margin: 0 !important;
   &:hover { transform: translateY(-4px); }
 
   // header / footer

@@ -35,3 +35,25 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 // @import '@ionic/angular/css/palettes/dark.system.css';
+
+.cards {
+  display: grid;
+  gap: 12px; padding: 16px;
+  grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+  opacity: .6;
+}
+
+/* modal largura fixa */
+ion-modal.fav-modal::part(content) {
+  width: 320px;
+  max-width: 320px;
+  height: 100%;
+  right: 0;
+  border-radius: 0;
+  box-shadow: -4px 0 18px rgba(0,0,0,.25);
+}

@@ -9,7 +9,7 @@ import { combineLatest, switchMap, map, forkJoin, of } from 'rxjs';
 
 import { PokemonService } from 'src/app/core/services/pokemon.service';
 import { PokemonTcgCardComponent } from
-  '../../components/pokemon-tcg-card/pokemon-tcg-card.component';
+  './components/pokemon-tcg-card/pokemon-tcg-card.component';
 import { arrowForwardOutline } from 'ionicons/icons';
 
 /* ────────── modelos ────────── */
