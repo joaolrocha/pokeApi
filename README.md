@@ -29,7 +29,7 @@ App de Pokédex mobile‑first feito em Ionic 7 stand‑alone com Angular 19 q
 
 ```bash
 git clone https://github.com/joaolrocha/pokeApi.git
-cd pokedex-ionic
+cd pokeApi
 npm install
 ionic serve
 ```
@@ -38,6 +38,7 @@ ionic serve
 
 ## 📷 Screenshots
 
-![home](docs/home.png)  
-![details](docs/details.png)  
-![favorites](docs/favorites.png)
+![home](docs/image1.png)  
+![details](docs/image2.png)  
+![filter](docs/image3.png)
+![favorites](docs/image4.png)
