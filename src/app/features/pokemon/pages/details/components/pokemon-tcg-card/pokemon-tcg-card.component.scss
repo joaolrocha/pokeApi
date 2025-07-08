@@ -1,3 +1,8 @@
+/* -------------------------------------------------
+   pokemon-tcg-card.component.scss  (flip-card 3-D)
+--------------------------------------------------*/
+
+/* mapa de cores de cada tipo */
 $t-colors: (
   fire: #fba54c, water: #539ddf, grass: #5fbd58, electric: #f2d94e,
   bug: #92bc2c, normal: #a0a29f, ground: #da7c4d, rock: #c9bb8a,
@@ -6,12 +11,56 @@ $t-colors: (
   steel: #5695a3, flying: #a1bbec
 );
 
+/* dimensões da carta */
+$card-w: 280px;
+$card-h: 508px;
+
+/* ---------- contêiner 3-D ---------- */
+.flip-container {
+  width: $card-w;
+  height: $card-h;
+  perspective: 1200px;          /* profundidade */
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* faces sobrepostas */
+.card-face {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  backface-visibility: hidden;  /* oculta verso */
+  transition: transform .6s;
+}
+
+/* efeito flip */
+.flip-container.flipped .front { transform: rotateY(180deg); }
+.flip-container.flipped .back  { transform: rotateY(360deg); }
+
+/* ----- VERSO ----- */
+.card-face.back {
+  transform: rotateY(180deg);   /* posição inicial */
+  background: #f8f8f8;
+  display: flex; justify-content: center; align-items: center;
+
+  img { width: 100%; height: 508px; }
+}
+
+/* ----- FRENTE (layout original) ----- */
+.card-face.front {}
+
+/* estilo da carta */
 .tcg-card {
-  width: 280px;
+  width: 100%;
+  // height: 100%;
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,.25);
+
+  /* cabeçalho */
   header {
     display: flex;
     justify-content: space-between;
@@ -19,29 +68,56 @@ $t-colors: (
     font-weight: bold;
     color: #fff;
   }
-  ion-img { width: 100%; height: 200px; object-fit: contain; background: #f8f8f8; }
-  .info { padding: 8px 10px; font-size: 13px;
-    .row { display: flex; gap: 6px; margin-bottom: 4px;
+
+  /* sprite */
+  ion-img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background: #f8f8f8;
+  }
+
+  /* infos */
+  .info {
+    padding: 8px 10px;
+    font-size: 13px;
+
+    .row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+
       .label { width: 70px; font-weight: 600; }
     }
+
     ion-badge { text-transform: capitalize; }
   }
-  .flavor { padding: 10px; font-size: 12px; font-style: italic; background: #fafafa; }
-}
 
-/* cor do header por tipo */
-@each $t,$c in $t-colors {
-  .tcg-card.type-#{$t} header { background: $c; }
-  .tcg-card.type-#{$t} ion-badge { background: $c; color: #fff; }
-}
+  /* stats */
+  .stats {
+    padding: 6px 10px;
+    background: #f3f3f3;
+    font-size: 12px;
 
-
-.stats {
-  padding: 6px 10px;
-  background: #f3f3f3;
-  font-size: 12px;
-  div {
-    display:flex; justify-content:space-between;
-    font-weight:600; margin:2px 0;
+    div {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin: 2px 0;
+    }
   }
+
+  /* descrição */
+  .flavor {
+    padding: 10px;
+    font-size: 12px;
+    font-style: italic;
+    background: #fafafa;
+  }
+}
+
+/* cores por tipo: header + badge */
+@each $t, $c in $t-colors {
+  .tcg-card.type-#{$t} header    { background: $c; }
+  .tcg-card.type-#{$t} ion-badge { background: $c; color: #fff; }
 }
