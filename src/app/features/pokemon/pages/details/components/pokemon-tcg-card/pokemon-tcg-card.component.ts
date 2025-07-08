@@ -25,4 +25,10 @@ interface CardData {
 })
 export class PokemonTcgCardComponent {
   @Input({ required: true }) data!: CardData;
+  @Input() disableFlip = false;   // se quiser desativar em algum lugar
+  flipped = false;
+
+  toggle() {
+    if (!this.disableFlip) { this.flipped = !this.flipped; }
+  }
 }

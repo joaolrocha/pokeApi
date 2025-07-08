@@ -1,32 +1,46 @@
-<div class="tcg-card type-{{ data.types[0] }}">
-  <!-- cabeçalho -->
-  <header>
-    <span class="name">{{ data.name | titlecase }}</span>
-    <span class="id">#{{ data.id | number:'3.0' }}</span>
-  </header>
+<!-- flip-container controla a rotação -->
+<div class="flip-container" [class.flipped]="flipped" (click)="toggle()">
 
-  <!-- sprite -->
-  <ion-img [src]="data.sprite" [alt]="data.name"></ion-img>
+  <!-- FACE - FRENTE (conteúdo original) -->
+  <div class="card-face front">
 
-  <!-- infos “pokedex” -->
-  <section class="info">
-    <div class="row">
-      <span class="label">Type</span>
-      <ion-badge *ngFor="let t of data.types">{{ t }}</ion-badge>
+    <div class="tcg-card type-{{ data.types[0] }}">
+      <!-- cabeçalho -->
+      <header>
+        <span class="name">{{ data.name | titlecase }}</span>
+        <span class="id">#{{ data.id | number:'3.0' }}</span>
+      </header>
+
+      <!-- sprite -->
+      <ion-img [src]="data.sprite" [alt]="data.name"></ion-img>
+
+      <!-- infos -->
+      <section class="info">
+        <div class="row">
+          <span class="label">Type</span>
+          <ion-badge *ngFor="let t of data.types">{{ t }}</ion-badge>
+        </div>
+        <div class="row"><span class="label">Height</span>{{ data.height / 10 | number:'1.1-1' }} m</div>
+        <div class="row"><span class="label">Weight</span>{{ data.weight / 10 | number:'1.1-1' }} kg</div>
+        <div class="row"><span class="label">Abilities</span>{{ data.abilities.join(', ') }}</div>
+      </section>
+
+      <!-- stats -->
+      <section class="stats" *ngIf="data.stats?.length">
+        <div *ngFor="let s of data.stats">
+          <span>{{ s.label }}</span><span>{{ s.value }}</span>
+        </div>
+      </section>
+
+      <!-- flavor -->
+      <section class="flavor">{{ data.description }}</section>
     </div>
-    <div class="row"><span class="label">Height</span>{{ data.height / 10 | number:'1.1-1' }} m</div>
-    <div class="row"><span class="label">Weight</span>{{ data.weight / 10 | number:'1.1-1' }} kg</div>
-    <div class="row"><span class="label">Abilities</span>{{ data.abilities.join(', ') }}</div>
-  </section>
 
-  <!-- stats base -->
-  <section class="stats" *ngIf="data.stats?.length">
-    <div *ngFor="let s of data.stats">
-      <span>{{ s.label }}</span>
-      <span>{{ s.value }}</span>
-    </div>
-  </section>
+  </div>
 
-  <!-- flavor text -->
-  <section class="flavor">{{ data.description }}</section>
+  <!-- FACE - VERSO -->
+  <div class="card-face back">
+    <img src="assets/backcard.png" alt="Pokémon Card Back" />
+  </div>
+
 </div>
